@@ -55,8 +55,27 @@
       min-height: 0;
     }
 
+    /* 題目文字必須作為一個完整文字流排版。
+       避免畫線詞語（例如「腦海」）在手機窄螢幕被 flex 當成獨立項目而移位。 */
     #question-text {
-      overflow-wrap: anywhere;
+      overflow-wrap: normal;
+      word-break: normal;
+      line-break: strict;
+    }
+
+    #question-text .question-sentence {
+      display: block;
+      width: 100%;
+      text-align: center;
+      line-height: inherit;
+    }
+
+    #question-text .question-sentence .text-rose-600 {
+      display: inline;
+      white-space: nowrap;
+      margin-left: 0.08em !important;
+      margin-right: 0.08em !important;
+      vertical-align: baseline;
     }
 
     #options-grid button {
@@ -508,7 +527,7 @@
       document.getElementById('success-overlay').classList.add('opacity-0', 'pointer-events-none');
 
       // 渲染題目句子
-      document.getElementById('question-text').innerHTML = q.sentence;
+      document.getElementById('question-text').innerHTML = `<div class="question-sentence">${q.sentence}</div>`;
 
       // 動態渲染 2x2 選項
       const optGrid = document.getElementById('options-grid');
