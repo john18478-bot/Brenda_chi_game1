@@ -2,7 +2,7 @@
 <html lang="zh-HK">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="referrer" content="no-referrer-when-downgrade">
   <title>第三課《爸爸和我》詞語大挑戰</title>
@@ -12,6 +12,7 @@
 
     :root {
       --font-rounded: 'M PLUS Rounded 1c', 'Noto Sans TC', sans-serif;
+      --app-height: 100dvh;
     }
 
     * {
@@ -26,13 +27,184 @@
 
     /* 確保在所有流動裝置與桌面上均為 100% 螢幕高度且絕不出現上下滾動條 */
     html, body {
-      width: 100vw;
-      height: 100vh;
-      min-height: 100vh;
-      height: 100dvh;
-      max-height: 100dvh;
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
       overflow: hidden;
+      overscroll-behavior: none;
       background: linear-gradient(135deg, #e0f2fe 0%, #fef3c7 50%, #fce7f3 100%);
+    }
+
+    body {
+      min-height: var(--app-height);
+      height: var(--app-height);
+      padding-top: max(0.5rem, env(safe-area-inset-top));
+      padding-right: max(0.5rem, env(safe-area-inset-right));
+      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+      padding-left: max(0.5rem, env(safe-area-inset-left));
+    }
+
+    #app-shell {
+      width: min(100%, 48rem);
+      height: 100%;
+      min-height: 0;
+      margin: 0 auto;
+    }
+
+    #game-card, #question-area, #options-grid {
+      min-height: 0;
+    }
+
+    #question-text {
+      overflow-wrap: anywhere;
+    }
+
+    #options-grid button {
+      min-width: 0;
+    }
+
+    /* 手機橫向：壓縮垂直間距，但不改變遊戲內容或操作方式 */
+    @media (orientation: landscape) and (max-height: 600px) {
+      body {
+        padding-top: max(0.25rem, env(safe-area-inset-top));
+        padding-bottom: max(0.25rem, env(safe-area-inset-bottom));
+        padding-left: max(0.5rem, env(safe-area-inset-left));
+        padding-right: max(0.5rem, env(safe-area-inset-right));
+      }
+
+      #app-shell {
+        width: min(100%, 62rem);
+        padding: 0 !important;
+      }
+
+      #top-header {
+        padding: 0.35rem 0.65rem !important;
+        border-radius: 0.8rem !important;
+        gap: 0.5rem !important;
+      }
+
+      #top-header .score-box {
+        padding: 0.1rem 0.55rem !important;
+        font-size: 0.72rem !important;
+      }
+
+      #game-card {
+        margin-top: 0.35rem !important;
+        margin-bottom: 0 !important;
+        padding: 0.5rem 0.7rem !important;
+        border-width: 3px !important;
+        border-radius: 1.1rem !important;
+      }
+
+      #question-toolbar {
+        min-height: 32px;
+      }
+
+      #q-number, #tts-btn {
+        font-size: 0.72rem !important;
+      }
+
+      #tts-btn {
+        padding: 0.25rem 0.65rem !important;
+      }
+
+      #question-area {
+        padding: 0.15rem 0 !important;
+        margin: 0.1rem 0 0.25rem !important;
+      }
+
+      #question-label {
+        font-size: 0.7rem !important;
+        margin-bottom: 0.15rem !important;
+      }
+
+      #question-text {
+        min-height: 52px !important;
+        padding: 0.45rem 0.7rem !important;
+        font-size: clamp(0.86rem, 2.4vw, 1.05rem) !important;
+        line-height: 1.35 !important;
+        border-radius: 0.8rem !important;
+      }
+
+      #options-grid {
+        gap: 0.4rem !important;
+      }
+
+      #options-grid button {
+        min-height: 42px !important;
+        padding: 0.35rem 0.55rem !important;
+        border-radius: 0.75rem !important;
+        font-size: clamp(0.74rem, 2vw, 0.9rem) !important;
+        line-height: 1.2 !important;
+        box-shadow: 0 4px 0 var(--tw-shadow-color);
+      }
+
+      #explanation-box {
+        margin-top: 0.35rem !important;
+        padding: 0.3rem 0.5rem !important;
+        font-size: 0.72rem !important;
+        line-height: 1.2 !important;
+      }
+
+      #start-screen, #end-screen {
+        padding: 0.6rem 1rem !important;
+      }
+
+      #start-screen .start-icon {
+        font-size: 2.1rem !important;
+        margin-bottom: 0.15rem !important;
+      }
+
+      #start-screen h1 {
+        font-size: clamp(1.15rem, 3.8vw, 1.6rem) !important;
+        line-height: 1.15 !important;
+        margin-bottom: 0.25rem !important;
+      }
+
+      #start-screen p {
+        font-size: 0.7rem !important;
+        margin-bottom: 0.55rem !important;
+        max-width: 32rem !important;
+      }
+
+      #start-screen button, #end-screen button {
+        font-size: 0.95rem !important;
+        padding: 0.45rem 1.25rem !important;
+      }
+
+      #end-screen .end-icon {
+        font-size: 2.5rem !important;
+        margin-bottom: 0.15rem !important;
+      }
+
+      #end-screen h2 {
+        font-size: 1.55rem !important;
+        margin-bottom: 0.2rem !important;
+      }
+
+      #final-score-text {
+        font-size: 1.05rem !important;
+        margin-bottom: 0.55rem !important;
+      }
+
+      #cute-emoji {
+        font-size: 3.2rem !important;
+      }
+
+      #success-overlay h2 {
+        font-size: 1.35rem !important;
+        margin-top: 0.35rem !important;
+      }
+    }
+
+    /* 特別矮的橫向手機（例如 320–390px 高） */
+    @media (orientation: landscape) and (max-height: 420px) {
+      #top-header { padding: 0.25rem 0.55rem !important; }
+      #game-card { padding: 0.35rem 0.55rem !important; }
+      #question-toolbar { min-height: 28px; }
+      #question-text { min-height: 44px !important; padding: 0.3rem 0.55rem !important; }
+      #options-grid button { min-height: 36px !important; padding: 0.25rem 0.45rem !important; }
+      #explanation-box { font-size: 0.68rem !important; }
     }
 
     /* 答錯震動 Shake 動畫 */
@@ -75,16 +247,16 @@
     }
   </style>
 </head>
-<body class="flex flex-col items-center justify-center p-2 sm:p-4">
+<body class="flex flex-col items-center justify-center">
 
-  <div class="w-full max-w-2xl h-screen min-h-screen max-h-screen supports-[height:100dvh]:h-[100dvh] supports-[height:100dvh]:min-h-[100dvh] supports-[height:100dvh]:max-h-[100dvh] flex flex-col justify-between py-2 sm:py-3 px-2 relative overflow-hidden">
+  <div id="app-shell" class="flex flex-col justify-between py-2 sm:py-3 px-2 relative overflow-hidden">
 
     <!-- 頂部資訊與進度條 -->
-    <header class="glass-card rounded-2xl p-2.5 sm:p-3 shadow-lg border-2 border-amber-200 flex items-center gap-3 shrink-0">
+    <header id="top-header" class="glass-card rounded-2xl p-2.5 sm:p-3 shadow-lg border-2 border-amber-200 flex items-center gap-3 shrink-0">
       <div class="flex-1 bg-slate-200 h-4 rounded-full overflow-hidden p-0.5 border border-slate-300">
         <div id="progress-bar" class="h-full bg-gradient-to-r from-amber-400 via-rose-400 to-pink-500 rounded-full transition-all duration-300 w-0"></div>
       </div>
-      <div class="bg-amber-100 text-amber-900 border-2 border-amber-300 px-3 py-1 rounded-xl text-xs sm:text-sm font-black flex items-center gap-1 shadow-sm whitespace-nowrap">
+      <div class="score-box bg-amber-100 text-amber-900 border-2 border-amber-300 px-3 py-1 rounded-xl text-xs sm:text-sm font-black flex items-center gap-1 shadow-sm whitespace-nowrap">
         <span>⭐ 分數:</span>
         <span id="score-text" class="text-rose-600 text-base sm:text-lg font-black">0</span>
       </div>
@@ -94,7 +266,7 @@
     <main id="game-card" class="glass-card flex-1 my-2 rounded-3xl p-3 sm:p-5 border-4 border-cyan-300 shadow-xl flex flex-col justify-between relative overflow-hidden transition-all duration-200">
       
       <!-- 題目頂部列：題號與朗讀按鈕 -->
-      <div class="flex justify-between items-center shrink-0">
+      <div id="question-toolbar" class="flex justify-between items-center shrink-0">
         <span id="q-number" class="bg-cyan-100 text-cyan-800 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full border border-cyan-300">
           第 1 / 13 題
         </span>
@@ -105,8 +277,8 @@
       </div>
 
       <!-- 題目課文句子區域 -->
-      <div class="my-auto flex flex-col justify-center items-center py-1">
-        <div class="text-slate-500 font-bold text-xs sm:text-sm mb-1 tracking-wide">選出畫線詞語的最適當意思：</div>
+      <div id="question-area" class="my-auto flex flex-col justify-center items-center py-1">
+        <div id="question-label" class="text-slate-500 font-bold text-xs sm:text-sm mb-1 tracking-wide">選出畫線詞語的最適當意思：</div>
         <div id="question-text" class="w-full bg-sky-50/90 border-2 border-dashed border-sky-300 rounded-2xl p-3 sm:p-4 text-center text-slate-800 text-base sm:text-xl font-bold leading-relaxed shadow-inner flex items-center justify-center min-h-[70px] sm:min-h-[90px]">
           載入題目中...
         </div>
@@ -131,7 +303,7 @@
 
       <!-- 開始遊戲畫面 Overlay -->
       <div id="start-screen" class="absolute inset-0 bg-gradient-to-br from-cyan-400 via-sky-400 to-indigo-500 rounded-2xl flex flex-col items-center justify-center p-4 z-30 text-white text-center">
-        <div class="text-5xl sm:text-6xl mb-2 animate-bounce">📚</div>
+        <div class="start-icon text-5xl sm:text-6xl mb-2 animate-bounce">📚</div>
         <h1 class="font-black text-2xl sm:text-3xl leading-tight mb-2 drop-shadow-md">
           三年級中文廣東話問答<br>
           <span class="text-amber-300">第三課《爸爸和我》</span>
@@ -146,7 +318,7 @@
 
       <!-- 結算畫面 Overlay -->
       <div id="end-screen" class="hidden absolute inset-0 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 rounded-2xl flex flex-col items-center justify-center p-4 z-30 text-white text-center">
-        <div class="text-6xl sm:text-7xl mb-2">🏆</div>
+        <div class="end-icon text-6xl sm:text-7xl mb-2">🏆</div>
         <h2 class="font-black text-3xl sm:text-4xl drop-shadow-md mb-2">挑戰完成！</h2>
         <p id="final-score-text" class="text-amber-200 text-xl sm:text-2xl font-black mb-6 drop-shadow">
           你的分數是：100 分
@@ -160,6 +332,22 @@
   </div>
 
   <script>
+    // 使用 visualViewport 固定實際可視高度，避免手機旋轉或瀏覽器工具列出現時版面跳動
+    function syncViewportHeight() {
+      const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      document.documentElement.style.setProperty('--app-height', `${Math.round(viewportHeight)}px`);
+    }
+
+    syncViewportHeight();
+    window.addEventListener('resize', syncViewportHeight, { passive: true });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(syncViewportHeight, 80);
+      setTimeout(syncViewportHeight, 300);
+    }, { passive: true });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', syncViewportHeight, { passive: true });
+    }
+
     // 依據附件《爸爸和我》編寫的 13 個重點詞語題目
     const quizData = [
       {
