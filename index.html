@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>第三課《爸爸和我》詞語大挑戰</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=M+PLUS+Rounded+1c:wght@700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap');
+
+    :root {
+      --font-rounded: 'M PLUS Rounded 1c', 'Noto Sans TC', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-rounded);
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    /* 確保在所有流動裝置與桌面上均為 100% 螢幕高度且絕不出現上下滾動條 */
+    html, body {
+      width: 100vw;
+      height: 100dvh;
+      max-height: 100dvh;
+      overflow: hidden;
+      background: linear-gradient(135deg, #e0f2fe 0%, #fef3c7 50%, #fce7f3 100%);
+    }
+
+    /* 答錯震動 Shake 動畫 */
+    .shake-card {
+      animation: shakeAnim 0.45s cubic-bezier(.36,.07,.19,.97) both;
+      border-color: #ef4444 !important;
+    }
+
+    @keyframes shakeAnim {
+      10%, 90% { transform: translate3d(-2px, 0, 0) rotate(-1deg); }
+      20%, 80% { transform: translate3d(4px, 0, 0) rotate(1.5deg); }
+      30%, 50%, 70% { transform: translate3d(-6px, 0, 0) rotate(-2deg); }
+      40%, 60% { transform: translate3d(6px, 0, 0) rotate(2deg); }
+    }
+
+    /* 可愛彈跳 Bounce 動畫 */
+    .bounce-pop {
+      animation: bouncePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite alternate;
+    }
+
+    @keyframes bouncePop {
+      0% { transform: scale(0.85) translateY(0) rotate(-5deg); }
+      100% { transform: scale(1.15) translateY(-20px) rotate(5deg); }
+    }
+
+    /* 按鈕點擊懸浮質感 */
+    .btn-3d {
+      transition: all 0.1s ease;
+      box-shadow: 0 6px 0 var(--tw-shadow-color);
+    }
+    .btn-3d:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 var(--tw-shadow-color);
+    }
+
+    /* 氣泡光澤裝飾 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center p-2 sm:p-4">
+
+  <div class="w-full max-w-2xl h-[100dvh] max-h-[100dvh] flex flex-col justify-between py-2 sm:py-3 px-2 relative overflow-hidden">
+
+    <!-- 頂部資訊與進度條 -->
+    <header class="glass-card rounded-2xl p-2.5 sm:p-3 shadow-lg border-2 border-amber-200 flex items-center gap-3 shrink-0">
+      <div class="flex-1 bg-slate-200 h-4 rounded-full overflow-hidden p-0.5 border border-slate-300">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-amber-400 via-rose-400 to-pink-500 rounded-full transition-all duration-300 w-0"></div>
+      </div>
+      <div class="bg-amber-100 text-amber-900 border-2 border-amber-300 px-3 py-1 rounded-xl text-xs sm:text-sm font-black flex items-center gap-1 shadow-sm whitespace-nowrap">
+        <span>⭐ 分數:</span>
+        <span id="score-text" class="text-rose-600 text-base sm:text-lg font-black">0</span>
+      </div>
+    </header>
+
+    <!-- 主卡片區域 -->
+    <main id="game-card" class="glass-card flex-1 my-2 rounded-3xl p-3 sm:p-5 border-4 border-cyan-300 shadow-xl flex flex-col justify-between relative overflow-hidden transition-all duration-200">
+      
+      <!-- 題目頂部列：題號與朗讀按鈕 -->
+      <div class="flex justify-between items-center shrink-0">
+        <span id="q-number" class="bg-cyan-100 text-cyan-800 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full border border-cyan-300">
+          第 1 / 13 題
+        </span>
+        <button id="tts-btn" onclick="readCurrentQuestion()" class="btn-3d bg-amber-300 border-2 border-amber-400 text-amber-900 shadow-amber-500 px-3.5 py-1.5 rounded-full font-black text-xs sm:text-sm flex items-center gap-1">
+          <span>🔊</span>
+          <span>讀題與選項</span>
+        </button>
+      </div>
+
+      <!-- 題目課文句子區域 -->
+      <div class="my-auto flex flex-col justify-center items-center py-1">
+        <div class="text-slate-500 font-bold text-xs sm:text-sm mb-1 tracking-wide">選出畫線詞語的最適當意思：</div>
+        <div id="question-text" class="w-full bg-sky-50/90 border-2 border-dashed border-sky-300 rounded-2xl p-3 sm:p-4 text-center text-slate-800 text-base sm:text-xl font-bold leading-relaxed shadow-inner flex items-center justify-center min-h-[70px] sm:min-h-[90px]">
+          載入題目中...
+        </div>
+      </div>
+
+      <!-- 2x2 選項網格區 (自適應高寬) -->
+      <div id="options-grid" class="grid grid-cols-2 gap-2 sm:gap-3 shrink-0">
+        <!-- 動態產生按鈕 -->
+      </div>
+
+      <!-- 答錯即時提示區 -->
+      <div id="explanation-box" class="hidden mt-2 bg-amber-50 border-2 border-amber-300 text-amber-900 rounded-xl p-2 text-xs sm:text-sm font-bold text-center shadow-sm shrink-0">
+        <!-- 動態提示內容 -->
+      </div>
+
+      <!-- 答對時的可愛動畫全屏 Overlay -->
+      <div id="success-overlay" class="absolute inset-0 bg-white/95 rounded-2xl flex flex-col items-center justify-center z-20 opacity-0 pointer-events-none transition-opacity duration-200">
+        <div id="cute-emoji" class="text-7xl sm:text-8xl bounce-pop drop-shadow-md">🎉</div>
+        <h2 class="text-emerald-500 font-black text-2xl sm:text-3xl mt-3 tracking-wide drop-shadow-sm">答對了！太棒了！</h2>
+        <p class="text-emerald-600 font-bold text-sm sm:text-base mt-1">+10 分 ⭐</p>
+      </div>
+
+      <!-- 開始遊戲畫面 Overlay -->
+      <div id="start-screen" class="absolute inset-0 bg-gradient-to-br from-cyan-400 via-sky-400 to-indigo-500 rounded-2xl flex flex-col items-center justify-center p-4 z-30 text-white text-center">
+        <div class="text-5xl sm:text-6xl mb-2 animate-bounce">📚</div>
+        <h1 class="font-black text-2xl sm:text-3xl leading-tight mb-2 drop-shadow-md">
+          三年級中文廣東話問答<br>
+          <span class="text-amber-300">第三課《爸爸和我》</span>
+        </h1>
+        <p class="text-sky-100 text-xs sm:text-sm max-w-xs mb-6 font-medium">
+          專為香港小學生設計，配有廣東話親切導航，考考你對 13 個重點詞語的理解！
+        </p>
+        <button onclick="startGame()" class="btn-3d bg-amber-400 border-2 border-amber-500 text-amber-950 shadow-amber-600 text-lg sm:text-xl font-black px-8 py-3 rounded-full tracking-wider animate-pulse">
+          🚀 開始挑戰
+        </button>
+      </div>
+
+      <!-- 結算畫面 Overlay -->
+      <div id="end-screen" class="hidden absolute inset-0 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 rounded-2xl flex flex-col items-center justify-center p-4 z-30 text-white text-center">
+        <div class="text-6xl sm:text-7xl mb-2">🏆</div>
+        <h2 class="font-black text-3xl sm:text-4xl drop-shadow-md mb-2">挑戰完成！</h2>
+        <p id="final-score-text" class="text-amber-200 text-xl sm:text-2xl font-black mb-6 drop-shadow">
+          你的分數是：100 分
+        </p>
+        <button onclick="restartGame()" class="btn-3d bg-white border-2 border-slate-200 text-emerald-700 shadow-slate-300 text-lg font-black px-8 py-3 rounded-full tracking-wider">
+          🔄 再玩一次
+        </button>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // 依據附件《爸爸和我》編寫的 13 個重點詞語題目
+    const quizData = [
+      {
+        word: "腦海",
+        sentence: "看着這張照片，我的<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>腦海</span>裏就浮現出與爸爸的歡樂往事。",
+        options: ["腦袋裡面（比喻記憶）", "大海的景色", "照片背景", "思考的聲音"],
+        answer: 0,
+        exp: "「腦海」是指腦袋裡面，常用來比喻腦中的記憶或想法。"
+      },
+      {
+        word: "浮現",
+        sentence: "每當我看見冰淇淋，腦海中就會<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>浮現</span>出爸爸笑嘻嘻的樣子。",
+        options: ["浮在水面上", "在記憶中顯現出來", "沉入水底", "突然消失"],
+        answer: 1,
+        exp: "「浮現」是指過去的情景或想法在腦海中顯現出來。"
+      },
+      {
+        word: "往事",
+        sentence: "我和爸爸常常坐在沙發上，一起回憶過去的歡樂<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>往事</span>。",
+        options: ["未來的打算", "別人的事情", "過去發生的事情", "希望發生的事"],
+        answer: 2,
+        exp: "「往事」就是指「過去發生的事情」。"
+      },
+      {
+        word: "懂事",
+        sentence: "我這不<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>懂事</span>的小丫頭，整天嚷着要出去玩。",
+        options: ["知道很多秘密", "了解常理、體諒他人", "做事非常迅速", "喜歡問問題"],
+        answer: 1,
+        exp: "「懂事」是指明白道理、能夠體諒父母或他人。"
+      },
+      {
+        word: "嚷",
+        sentence: "小時候的我愛玩又好奇，整天<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>嚷</span>着要出去玩。",
+        options: ["大聲喊叫", "小聲說話", "用筆寫字", "安靜思考"],
+        answer: 0,
+        exp: "「嚷」意思是喊叫、大聲地吵鬧喊喊。"
+      },
+      {
+        word: "空閒",
+        sentence: "爸爸就在<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>空閒</span>時帶着我到處遊玩，走遍香港。",
+        options: ["工作很忙碌", "沒有事情做的時候（空餘時間）", "房間空間很大", "心情不好"],
+        answer: 1,
+        exp: "「空閒」是指事情做完後的閒暇、空餘時間。"
+      },
+      {
+        word: "趁",
+        sentence: "我們父女倆就<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>趁</span>着外出的機會，在糖果店買巧克力。",
+        options: ["避免", "利用（時間或機會）", "錯過", "等待"],
+        answer: 1,
+        exp: "「趁」意思是利用某種條件、時間或機會。"
+      },
+      {
+        word: "痛快",
+        sentence: "我們偷偷買了好多巧克力，吃個<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>痛快</span>才回去。",
+        options: ["身體感到疼痛", "非常暢快、盡興", "心情很悲傷", "吃得很辛苦"],
+        answer: 1,
+        exp: "「痛快」是指感到非常高興、暢快和盡興！"
+      },
+      {
+        word: "洋溢",
+        sentence: "雖然是「偷吃」，嘴裏卻<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>洋溢</span>着香味與幸福。",
+        options: ["流出水來", "充分充滿或透露出來", "逐漸減少", "非常冷淡"],
+        answer: 1,
+        exp: "「洋溢」指氣氛或情感充分地濃郁、顯露出來。"
+      },
+      {
+        word: "不知不覺",
+        sentence: "<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>不知不覺</span>間，我長到九歲了，感情卻沒有淡下來。",
+        options: ["沒有察覺到（時間過得快）", "感到非常害怕", "昏迷沒有知覺", "特意留意到"],
+        answer: 0,
+        exp: "「不知不覺」意思是沒有意識到、沒有察覺到事情的發生或時間的變化。"
+      },
+      {
+        word: "淡",
+        sentence: "爸爸工作越來越忙碌，我們的感情卻沒有因此<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>淡</span>下來。",
+        options: ["味道很鹹", "（感情）變冷淡、變薄", "顏色變深", "關係變好"],
+        answer: 1,
+        exp: "這裡「淡」是指感情變得冷淡或薄弱。"
+      },
+      {
+        word: "傾",
+        sentence: "爸爸現在成了我的「書友」，常常和我一起看書、<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>傾</span>談。",
+        options: ["傾斜身體", "搬運東西", "傾吐心意、談心", "吵架爭執"],
+        answer: 2,
+        exp: "「傾談」意思是交談、談心，把心裡的話傾吐出來。"
+      },
+      {
+        word: "辯論",
+        sentence: "看完書後，我和爸爸會一起討論，甚至進行<span class='text-rose-600 underline underline-offset-4 decoration-2 font-black mx-1'>辯論</span>。",
+        options: ["各持己見，提出理由互相辯駁", "互相稱讚對方", "默默看書不說話", "一起唱唱歌"],
+        answer: 0,
+        exp: "「辯論」是指大家提出自己的理由，互相爭辯說明各自的看法。"
+      }
+    ];
+
+    const cuteEmojis = ['🐱', '🐶', '🐰', '🐼', '🦊', '🦁', '🦄', '🐣', '🐥', '🐸'];
+    const optionLabels = ['A', 'B', 'C', 'D'];
+    
+    let currentQ = 0;
+    let score = 0;
+    let canClick = true;
+
+    // 廣東話語音合成 (Web Speech API)
+    const synth = window.speechSynthesis;
+
+    function speakCantonese(text, callback) {
+      if (!synth) {
+        if (callback) callback();
+        return;
+      }
+      if (synth.speaking) {
+        synth.cancel();
+      }
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'zh-HK'; // 指定香港廣東話
+      utterance.rate = 0.88;    // 適合三上學生的親切語速
+
+      if (callback) {
+        utterance.onend = callback;
+        utterance.onerror = callback;
+      }
+
+      synth.speak(utterance);
+    }
+
+    function startGame() {
+      document.getElementById('start-screen').classList.add('hidden');
+      currentQ = 0;
+      score = 0;
+      updateScoreUI(0);
+      loadQuestion();
+    }
+
+    function restartGame() {
+      document.getElementById('end-screen').classList.add('hidden');
+      startGame();
+    }
+
+    function loadQuestion() {
+      canClick = true;
+      const q = quizData[currentQ];
+
+      // 更新進度與題號
+      const progressPct = ((currentQ) / quizData.length) * 100;
+      document.getElementById('progress-bar').style.width = progressPct + '%';
+      document.getElementById('q-number').innerText = `第 ${currentQ + 1} / ${quizData.length} 題`;
+
+      // 重置提示與動畫覆蓋
+      document.getElementById('explanation-box').classList.add('hidden');
+      document.getElementById('success-overlay').classList.remove('opacity-100');
+      document.getElementById('success-overlay').classList.add('opacity-0', 'pointer-events-none');
+
+      // 渲染題目句子
+      document.getElementById('question-text').innerHTML = q.sentence;
+
+      // 動態渲染 2x2 選項
+      const optGrid = document.getElementById('options-grid');
+      optGrid.innerHTML = '';
+
+      q.options.forEach((optText, index) => {
+        const btn = document.createElement('button');
+        btn.className = `btn-3d bg-white border-2 border-slate-300 shadow-slate-400 text-slate-800 rounded-2xl p-2.5 sm:p-3 text-sm sm:text-base font-black flex items-center justify-center text-center leading-snug hover:border-cyan-400 hover:bg-cyan-50 min-h-[50px] sm:min-h-[64px]`;
+        btn.innerHTML = `<span class="text-rose-500 mr-1 sm:mr-1.5 font-black">${optionLabels[index]}.</span> ${optText}`;
+        btn.onclick = () => checkAnswer(index);
+        optGrid.appendChild(btn);
+      });
+
+      // 載入題目自動以廣東話朗讀題目與選項
+      readCurrentQuestion();
+    }
+
+    function readCurrentQuestion() {
+      const q = quizData[currentQ];
+      // 去除 HTML 標籤供語音朗讀
+      const cleanSentence = q.sentence.replace(/<[^>]*>/g, '');
+      let speechContent = `第${currentQ + 1}題。請選出畫線詞語的意思：${cleanSentence}。`;
+
+      q.options.forEach((opt, idx) => {
+        speechContent += ` 選項 ${optionLabels[idx]}，${opt}。`;
+      });
+
+      speakCantonese(speechContent);
+    }
+
+    function checkAnswer(selectedIndex) {
+      if (!canClick) return;
+
+      const q = quizData[currentQ];
+      const card = document.getElementById('game-card');
+      const expBox = document.getElementById('explanation-box');
+
+      if (selectedIndex === q.answer) {
+        // 答對邏輯
+        canClick = false;
+        score += 10;
+        updateScoreUI(score);
+
+        // 隨機可愛 Emoji
+        const randomEmoji = cuteEmojis[Math.floor(Math.random() * cuteEmojis.length)];
+        document.getElementById('cute-emoji').innerText = randomEmoji;
+
+        // 顯示答對全屏 Overlay 特效
+        const overlay = document.getElementById('success-overlay');
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+        overlay.classList.add('opacity-100');
+
+        // 播報語音讚賞，語音完結後自動進入下一題
+        speakCantonese("答對了！太棒了！", () => {
+          setTimeout(() => {
+            currentQ++;
+            if (currentQ < quizData.length) {
+              loadQuestion();
+            } else {
+              showEndScreen();
+            }
+          }, 350);
+        });
+
+      } else {
+        // 答錯邏輯
+        // 1. 卡片震動 (Shake Effect)
+        card.classList.add('shake-card');
+        setTimeout(() => card.classList.remove('shake-card'), 500);
+
+        // 2. 顯示解釋提示
+        expBox.classList.remove('hidden');
+        expBox.innerHTML = `💡 <strong>小提示：</strong>${q.exp}`;
+
+        // 3. 廣東話語音導航提示
+        speakCantonese(`答錯了，不要緊。睇睇提示：${q.exp}`);
+      }
+    }
+
+    function updateScoreUI(val) {
+      document.getElementById('score-text').innerText = val;
+    }
+
+    function showEndScreen() {
+      document.getElementById('progress-bar').style.width = '100%';
+      const endOverlay = document.getElementById('end-screen');
+      document.getElementById('final-score-text').innerText = `你的總得分是：${score} 分！`;
+      endOverlay.classList.remove('hidden');
+
+      speakCantonese(`恭喜你完成挑戰！你的總得分是 ${score} 分！`);
+    }
+  </script>
+</body>
+</html>
